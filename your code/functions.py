@@ -100,6 +100,7 @@ def plot_confusion_matrix(cm, classes,
     """
     This function prints and plots the confusion matrix.
     Normalization can be applied by setting `normalize=True`.
+    
     PLEASE COPY PASTE THE BELOW METHOD:
     cnf_matrix = confusion_matrix(y_test, neigh5_pre, labels=[0,1, 2])
     np.set_printoptions(precision=2)
