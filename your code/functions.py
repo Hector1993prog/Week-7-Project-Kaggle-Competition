@@ -12,10 +12,10 @@ from pandas_profiling import ProfileReport
 from IPython.core.display import display
 from pandas_profiling.report.presentation.flavours.widget.notebook import (get_notebook_iframe,)
 import csv
-from sklearn.metrics import classification_report, confusion_matrix
+from sklearn.metrics import classification_report, confusion_matrix, accuracy_score
 import matplotlib.pyplot as plt
 import itertools
-
+from sklearn.neighbors import KNeighborsClassifier
 def check_nan(df: pd.DataFrame) -> None:
     '''
     This function allows to check the nan in a dafa fram in pandas
@@ -134,3 +134,31 @@ def plot_confusion_matrix(cm, classes,
     plt.tight_layout()
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
+
+def k_perfect(X_train, y_train,X_test, y_test ):
+    '''
+    This function returns the optimal K for your K-nearest 
+    classification. you have to introduce x and y for training and x-y test
+    '''
+    Ks = 10
+    mean_acc = np.zeros((Ks-1))
+    std_acc = np.zeros((Ks-1))
+
+    for n in range(1,Ks):
+        K = KNeighborsClassifier(n_neighbors = n).fit(X_train,y_train)
+        yhat=K.predict(X_test)
+        mean_acc[n-1] =accuracy_score(y_test, yhat)
+
+    
+    std_acc[n-1]=np.std(yhat==y_test)/np.sqrt(yhat.shape[0])
+
+    mean_acc
+
+    plt.plot(range(1,Ks),mean_acc,'g')
+    plt.fill_between(range(1,Ks),mean_acc - 1 * std_acc,mean_acc + 1 * std_acc, alpha=0.10)
+    plt.fill_between(range(1,Ks),mean_acc - 3 * std_acc,mean_acc + 3 * std_acc, alpha=0.10,color="green")
+    plt.legend(('Accuracy ', '+/- 1xstd','+/- 3xstd'))
+    plt.ylabel('Accuracy ')
+    plt.xlabel('Number of Neighbors (K)')
+    plt.tight_layout()
+    plt.show()
