@@ -17,6 +17,7 @@ import matplotlib.pyplot as plt
 import itertools
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neighbors import NearestNeighbors
+
 def check_nan(df: pd.DataFrame) -> None:
     '''
     This function allows to check the nan in a dafa fram in pandas
@@ -80,7 +81,7 @@ def writelstcsv(guest_list, filename):
             outfile.write("\n")
 
 
-def report_pd(df, to_html:bool ):
+def report_pd(df, to_html:bool, name=str):
 
     '''
     This function implements the pandas data frame report
@@ -88,7 +89,7 @@ def report_pd(df, to_html:bool ):
     on your jupyter notebook
     '''
     x= ProfileReport(df)
-    y= x.to_file("your_report.html")
+    y= x.to_file(name)
     if to_html == True:
         return y
     else:
