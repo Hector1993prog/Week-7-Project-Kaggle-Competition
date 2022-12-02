@@ -16,6 +16,7 @@ from sklearn.metrics import classification_report, confusion_matrix, accuracy_sc
 import matplotlib.pyplot as plt
 import itertools
 from sklearn.neighbors import KNeighborsClassifier
+from sklearn.neighbors import NearestNeighbors
 def check_nan(df: pd.DataFrame) -> None:
     '''
     This function allows to check the nan in a dafa fram in pandas
@@ -162,3 +163,40 @@ def k_perfect(X_train, y_train,X_test, y_test ):
     plt.xlabel('Number of Neighbors (K)')
     plt.tight_layout()
     plt.show()
+
+def perfect_epsilon(df):
+    '''
+    This function finds the perfect epsilon for
+    your BDSCAN clustering.
+    Please note that the df needs to be normatized
+    to make it work.
+    '''
+    neigh = NearestNeighbors(n_neighbors=2)
+    nbrs = neigh.fit(df)
+    distances, indices = nbrs.kneighbors(df)
+    distances = np.sort(distances, axis=0)
+    distances = distances[:,1]
+    plt.plot(distances);
+
+def K_means_plot(k_means_labels, k_means_cluster_centers):
+
+    '''
+    This function creates a plot for your K means cluster
+    the values needs to ve the k labes and the centers
+    '''
+
+    fig = plt.figure(figsize=(19, 10))
+    colors = plt.cm.Spectral(np.linspace(0, 1, len(set(k_means_labels))))
+    ax = fig.add_subplot(1, 1, 1)
+
+    for k, col in zip(range(len([[4,4], [-2, -1], [2, -3], [1, 1]])), colors):
+        my_members = (k_means_labels == k)
+        cluster_center = k_means_cluster_centers[k]  
+        ax.plot(X[my_members, 0], X[my_members, 1], 'g', markerfacecolor=col, marker='.')
+        ax.plot(cluster_center[0], cluster_center[1], 'o', markerfacecolor=col,  markeredgecolor='k', markersize=6)
+        ax.plot(X[my_members, 0], X[my_members, 1], 'g', markerfacecolor=col, marker='.')   
+        ax.plot(cluster_center[0], cluster_center[1], 'o', markerfacecolor=col,  markeredgecolor='k', markersize=6)
+    ax.set_title('KMeans')
+    ax.set_xticks(())
+    ax.set_yticks(())
+    plt.show();
