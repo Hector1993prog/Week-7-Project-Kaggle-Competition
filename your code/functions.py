@@ -17,6 +17,9 @@ import matplotlib.pyplot as plt
 import itertools
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.neighbors import NearestNeighbors
+from sklearn.cluster import KMeans
+from scipy import stats
+stats.chisqprob = lambda chisq, df: stats.chi2.sf(chisq, df)
 
 def check_nan(df: pd.DataFrame) -> None:
     '''
@@ -179,3 +182,60 @@ def perfect_epsilon(df):
     distances = distances[:,1]
     plt.plot(distances);
 
+def log_r_summary(x1, y):
+    '''
+    This function displays a summary for the logistic regression
+    '''
+    x = sm.add_constant(x1)
+    reg_log = sm.Logit(y,x)
+    results_log = reg_log.fit()
+
+# Get the regression summary
+    return results_log.summary()
+
+def log_r_plot(x1,y, x_label=str, y_label=str):
+    '''
+    This function creates a plot for the logistic regression
+    '''
+    plt.scatter(x1,y,color = 'C0')
+
+    # Don't forget to label your axes!
+    plt.xlabel('Duration', fontsize = 20)
+    plt.ylabel('Subscription', fontsize = 20)
+    return plt.show()
+
+def perfect_wcss_k_means(x, y, data):
+    '''
+    This function creates a loop to check the perfect
+    WCSS value. The parameters are the range of clusters
+    (x, y) and the data to be fitted.
+    '''
+    wcss=[]
+    for i in range(x,y):
+    # Cluster solution with i clusters
+        kmeans = KMeans(i)
+    # Fit the data
+        kmeans.fit(x)
+    # Find WCSS for the current iteration
+        wcss_iter = kmeans.inertia_
+    # Append the value to the WCSS list
+        wcss.append(wcss_iter)
+    return wcss
+
+def elbow_method(x,y, wcss=list):
+    '''
+    This function return a plot for the 
+    elbow method, another way to see the 
+    most accurate K for the K-means
+    method.
+
+    The paramenter are the range, (x,y)
+    and the wcss which needs to be calculated 
+    with the prefect_wcss_k_means function.
+    '''
+    number_clusters = range(x,y) 
+    plt.title('The Elbow Method')
+    plt.xlabel('Number of clusters')
+    plt.ylabel('Within-cluster Sum of Squares')
+    return plt.plot(number_clusters,wcss)
+    
